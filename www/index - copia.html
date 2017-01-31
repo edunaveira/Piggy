@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <title>Piggy Money</title>
+        <style>
+        	body{
+        		background-color: red;
+        		margin: 0;
+        	}
+
+        	div#pantalla{
+        		width: 57vh;
+        		height: 100vh;
+        		background-color: white;
+        		background: -webkit-linear-gradient(#40bcef, #c8fdfe); /* For Safari 5.1 to 6.0 */
+			    background: -o-linear-gradient(#40bcef, #c8fdfe); /* For Opera 11.1 to 12.0 */
+			    background: -moz-linear-gradient(#40bcef, #c8fdfe); /* For Firefox 3.6 to 15 */
+			    background: linear-gradient(#40bcef, #c8fdfe); /* Standard syntax (must be last) */
+        		margin: auto;
+        	}
+
+        	div#marcador{
+
+        	}
+
+        	#marcador p{
+				color: white;
+			    margin: 0;
+			    text-align: center;
+			    padding-top: 2vh;
+			    font-size: 4vh;
+			    width: 100%;
+			    font-family: sans-serif;
+			    text-shadow: 0 0 4px #000;
+			    -moz-text-shadow: 0 0 4px #000;
+			    -webkit-text-shadow: 0 0 4px #000;
+        	}
+
+        	div#suelo{
+        		width: 57vh;
+        		height: 15vh;
+        		position: absolute;
+    			bottom: 0;
+        		background: -webkit-linear-gradient(#645b1a, #318713); /* For Safari 5.1 to 6.0 */
+			    background: -o-linear-gradient(#645b1a, #318713); /* For Opera 11.1 to 12.0 */
+			    background: -moz-linear-gradient(#645b1a, #318713); /* For Firefox 3.6 to 15 */
+			    background: linear-gradient(#645b1a, #318713); /* Standard syntax (must be last) */
+        	}
+
+        	#cerdito img{
+        		width: 14vh;
+        		position: absolute;
+        		bottom: 0;
+        		margin-bottom: 10vh;
+        	}
+
+        </style>
+    </head>
+    <body>
+
+    	<div id="pantalla">
+    		<div id="marcador">
+    			<p>$ XXXX &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Level XX</p>
+    			<p id="test">aa</p>
+    		</div>
+    		<div id="suelo"></div>
+    		<div id="cerdito">
+    			<img src="img/cerdito.png">
+    		</div>
+    	</div>
+
+
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/phaser.min.js"></script>
+
+        <script>
+        	//Para mover al gorrino tenemos de 0 a margin-left: 43vh;
+
+        	var app={
+        		init: function(){
+        			app.sensorMovimiento();
+        		},
+        		sensorMovimiento: function(){
+
+        			function onError(){
+        				console.log('onError - sensorMovimiento');
+        			}
+
+        			function onSuccess(dato){
+						X = dato.x ;
+    					Y = dato.y ;
+    					document.getElementById('test').innerHTML= "X "+X+" - Y "+Y;
+
+        			}
+
+        			navigator.accelerometer.watchAcceleration(onSuccess, onError,{ frequency: 10 });
+        		},
+        		detectarDireccion: function(dato){
+        			X = dato.x ;
+    				Y = dato.y ;
+
+    				document.getElementById('test').innerHTML= "X "+X+" - Y "+Y;
+
+
+        		}
+        	}
+
+        	if ('addEventListener' in document) {
+    document.addEventListener('deviceready', function() {
+        app.init();
+    }, false);
+}
+
+        </script>
+
+    </body>
+</html>

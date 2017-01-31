@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <title>Piggy Money</title>
+        <style>
+        	body{
+        		background-color: blue;
+        		margin: 0;
+        	}
+
+        	div#pantalla{
+        		width: 57vh;
+        		height: 100vh;
+        		background-color: #67d0ff;
+        		/*background: -webkit-linear-gradient(#40bcef, #c8fdfe); /* For Safari 5.1 to 6.0 
+			    background: -o-linear-gradient(#40bcef, #c8fdfe); /* For Opera 11.1 to 12.0 
+			    background: -moz-linear-gradient(#40bcef, #c8fdfe); /* For Firefox 3.6 to 15 
+			    background: linear-gradient(#40bcef, #c8fdfe); /* Standard syntax (must be last) */
+        		margin: auto;
+        	}
+
+        	div#marcador{
+
+        	}
+
+        	#marcador p{
+				color: white;
+			    margin: 0;
+			    text-align: center;
+			    padding-top: 2vh;
+			    font-size: 4vh;
+			    width: 100%;
+			    font-family: sans-serif;
+			    text-shadow: 0 0 4px #000;
+			    -moz-text-shadow: 0 0 4px #000;
+			    -webkit-text-shadow: 0 0 4px #000;
+        	}
+
+        	div#suelo{
+        		width: 57vh;
+        		height: 15vh;
+        		position: absolute;
+    			bottom: 0;
+                background-color: #44bf5d;
+        		/*background: -webkit-linear-gradient(#645b1a, #318713); /* For Safari 5.1 to 6.0 
+			    background: -o-linear-gradient(#645b1a, #318713); /* For Opera 11.1 to 12.0 
+			    background: -moz-linear-gradient(#645b1a, #318713); /* For Firefox 3.6 to 15 
+			    background: linear-gradient(#645b1a, #318713); /* Standard syntax (must be last) */
+        	}
+
+        	#cerdito img{
+        		width: 14vh;
+        		position: absolute;
+        		bottom: 0;
+        		margin-bottom: 10vh;
+        	}
+
+            canvas{
+                position: absolute;
+                top:0;
+                left: 0;
+            }
+            
+            @media only screen and (orientation:portrait){
+              canvas {  
+                
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                transform: rotate(0deg);
+              }
+            }
+            @media only screen and (orientation:landscape){
+              canvas {  
+                 -webkit-transform: rotate(90deg);
+                 -moz-transform: rotate(90deg);
+                 -o-transform: rotate(90deg);
+                 -ms-transform: rotate(90deg);
+                 transform: rotate(90deg);
+              }
+            }
+
+        </style>
+    </head>
+    <body>
+
+
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/phaser.js"></script>
+
+        <script>
+
+        	var app={
+        		init: function(){
+
+                    nivel = 1;
+                    puntuacion = 0;
+
+                    alto  = document.documentElement.clientHeight;
+                    ancho = document.documentElement.clientWidth;
+
+                    //Audios, archivos extraidos de freesound.org
+                    audioMoneda = new Audio('audio/213979__fenrirfangs__coin clatter 3.mp3');
+                    audioFallo = new Audio('audio/171497__fins__error.mp3');
+
+        			//app.sensorMovimiento();
+                    app.inicioJuego();
+
+
+        		},
+                inicioJuego: function(){
+
+                    function preload(){
+                        game.physics.startSystem(Phaser.Physics.ARCADE);
+                        game.stage.backgroundColor = '#67d0ff';
+                        game.load.image('cerdito', 'img/cerdito-mini.png');
+                        game.load.image('moneda', 'img/moneda-mini.png');
+                    }
+
+                    function create(){
+
+                        
+                        moneda = game.add.sprite(0,0, 'moneda');
+                        cerdito = game.add.sprite(0,app.porcentajeAltura()*90, 'cerdito');
+                        scoreText = game.add.text(16, 16, puntuacion+"$", { fontSize: '36px', fill: 'white' });
+                        ;
+                        //floor = new Phaser.Rectangle(0, app.porcentajeAltura()*80, app.porcentajeAltura()*100, app.porcentajeAltura()*100);
+
+                        game.physics.arcade.enable(moneda);
+                        game.physics.arcade.enable(cerdito);
+
+                        moneda.body.collideWorldBounds = true;
+                        moneda.body.onWorldBounds = new Phaser.Signal();
+                        moneda.body.onWorldBounds.add(app.actualizarMarcador, this);
+                        //moneda.outOfBoundsKill = true;
+
+                        cerdito.body.collideWorldBounds = true;
+
+                        app.sensorMovimiento();
+
+                    }
+
+                    function update(){
+                        moneda.body.velocity.y = 300;
+                        //cerdito.body.velocity.x = 100;
+                    }
+
+                    function render() {
+                        //game.debug.geom(floor,'green');
+                    }
+
+                    var estados = { preload: preload, create: create, update: update, render: render };
+                    var game = new Phaser.Game(ancho, alto, Phaser.CANVAS, 'phaser',estados);
+
+                },
+        		sensorMovimiento: function(){
+
+        			function onError(){
+        				console.log('onError - sensorMovimiento');
+        			}
+
+        			function onSuccess(dato){
+						X = dato.x ;
+    					Y = dato.y ;
+    					//document.getElementById('test').innerHTML= "X "+X+" - Y "+Y;
+
+                        if(X > 1){
+                            cerdito.body.velocity.x = -100 * X;
+                        }
+
+                        if(X < -1){
+                            cerdito.body.velocity.x = -100 * X;
+                        }
+
+                        if(X > -1 && X < 1) cerdito.body.velocity.x = 0;
+
+        			}
+//error ->
+        			var watchID = navigator.accelerometer.watchAcceleration(onSuccess, onError, { frequency: 100 });
+        		},
+        		detectarDireccion: function(dato){
+        			X = dato.x ;
+    				Y = dato.y ;
+
+    				document.getElementById('test').innerHTML= "X "+X+" - Y "+Y;
+        		},
+                porcentajeAltura: function(){
+                    return Math.round(alto/100);
+                },
+                posicionAleatoria: function(){
+                    return Math.round(Math.random() * ancho);
+                },
+                actualizarMarcador: function(){
+
+                    //Si el cerdito se encuentra en el rango de la moneda aumentamos...
+
+                    if(cerdito.x < moneda.x+12 && cerdito.x+90 > moneda.x+12){
+                        audioMoneda.play();
+                        puntuacion++;
+                    }else{
+                        audioFallo.play();
+                        puntuacion-=3;//podemos ir variando en función del nivel...
+                    }
+
+                    moneda.y = 0;
+                    moneda.x = app.posicionAleatoria();
+
+                    scoreText.text = puntuacion + "$";
+                }
+        	}
+
+        	if ('addEventListener' in document) {
+                document.addEventListener('deviceready', function() {
+                    app.init();
+                }, false);
+            }
+
+            /*
+            01-30 23:46:15.150 22948-22948/tk.edurapp.piggymoney E/Web Console: Uncaught TypeError: Cannot call method 'watchAcceleration' of undefined at file:///android_asset/www/index.html:182
+01-30 23:46:17.148 22948-22974/tk.edurapp.piggymoney E/MediaPlayer: Attempt to perform seekTo in wrong state: mPlayer=0x0, mCurrentState=1
+01-30 23:46:17.148 22948-22974/tk.edurapp.piggymoney E/MediaPlayer: error (-38, 0)
+            */
+
+
+        </script>
+
+    </body>
+</html>
