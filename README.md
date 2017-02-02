@@ -1,4 +1,4 @@
-# A Blank PhoneGap App
+# Piggy Money Game PhoneGap App
 
 ## Usage
 
