@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+		<title>Piggy Money</title>
+		<style>
+		body{
+			background-color: #67d0ff;
+		}
+		button{
+		    min-width: 300px;
+		    height: 50px;
+		    background-color: #ff3399;
+		    color: white;
+		    border-radius: 5px;
+		    display: block;
+		    border: 0px;
+		    margin: 24px auto;
+		    font-size: 24px;
+		}
+
+		button:hover{
+			background-color: red;
+		}
+
+		button a{
+			text-decoration: none;
+			color: white;
+		}
+
+		#titulo{
+			margin: auto;
+			display: block;
+			padding: 5%;
+			width: 90%;
+			max-width: 500px;
+		}
+
+		#cerdito{
+			margin: auto;
+			display: block;
+			margin-top: 100px;
+		}
+
+		#moneda{
+			margin: auto;
+			display: block;
+		}
+
+		</style>
+	</head>
+	<body>
+
+		<div class="container">
+		<!--https://fonts.google.com/specimen/Pacifico-->
+			<img id="titulo" src="img/titulo.png">
+
+			<button onclick="window.location.href='index.html'"><a href="index.html">Play</a></button>
+			<button onclick="alert('Gira o toca la pantalla para mover al cochino, consiste en meter monedas en el porcino, no mas...')">Ayuda</button>
+			<button onclick="window.location.href='config.html'">Configuración</button>
+			
+			<img id="moneda" src="img/moneda-mini.png">
+			<img id="cerdito" src="img/cerdito-mini.png">
+		</div>
+
+		<script type="text/javascript" src="cordova.js"></script>
+		<script>
+			
+		</script>
+
+	</body>
+</html>

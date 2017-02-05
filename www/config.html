@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+		<title>Configuración</title>
+		<style type="text/css">
+			body{
+				background-color: #67d0ff;
+				color: white;
+				font-size: 24px;
+
+			}
+
+			tr td{
+				margin-bottom: 20px;
+			}
+
+			td:nth-child(2){
+				width: 36px;
+				height: 36px;
+				border-radius: 50px;
+			}
+
+		</style>
+	</head>
+	<body>
+
+		<div class="container">
+			<p id="test"></p>
+			<table>
+				<tr>
+					<td>Acelerometro</td>
+					<td style="background-color: green"></td>
+				</tr>
+				
+				<tr>
+					<td>Táctil</td>
+					<td style="background-color: red"></td>
+				</tr>
+			</table>
+		</div>
+
+		<script type="text/javascript" src="cordova.js"></script>
+		<script>
+			if(!localStorage.getItem('cont')){
+				localStorage.setItem('cont', 1);
+				cont = 1;
+			}else{
+				cont = parseInt(localStorage.getItem('cont'))+1;
+				localStorage.setItem('cont', cont);
+			}
+			localStorage.setItem('test', new Date());
+			document.getElementById('test').innerHTML = localStorage.getItem('cont');
+
+			/*
+				Nivel
+
+				Acelerometro
+				Tactil
+				Teclado
+				Sonido
+
+			*/
+
+		</script>
+
+	</body>
+</html>

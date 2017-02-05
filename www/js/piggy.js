@@ -1,68 +1,10 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-        <title>Piggy Money</title>
-        <style>
-        	body{
-        		background-color: #67d0ff;
-        		margin: 0;
-        	}
-
-            canvas{
-                position: absolute;
-                top:0;
-                left: 0;
-            }
-            
-            @media only screen and (orientation:portrait){
-              canvas {  
-                
-                -webkit-transform: rotate(0deg);
-                -moz-transform: rotate(0deg);
-                -o-transform: rotate(0deg);
-                -ms-transform: rotate(0deg);
-                transform: rotate(0deg);
-              }
-            }
-            @media only screen and (orientation:landscape){
-              canvas {  
-                 -webkit-transform: rotate(90deg);
-                 -moz-transform: rotate(90deg);
-                 -o-transform: rotate(90deg);
-                 -ms-transform: rotate(90deg);
-                 transform: rotate(90deg);
-              }
-            }
-
-            #marcador{
-            	position:fixed;
-            	top: 16px;
-            	right: 16px;
-            	z-index: 1;
-            	color: white;
-            }
-
-        </style>
-    </head>
-    <body>
-
-        <div id="marcador"></div>
-
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/phaser.min.js"></script>
-        <!--<script type="text/javascript" src="js/piggy.js?v=1.0.12">></script>-->
-        <script>
 var game;
 
 var app={
-    diametroMoneda: 33,
     init: function(){
 
         nivel = 1;
         puntuacion = 0;
-        monedasCaidas = 1;
 
         alto  = document.documentElement.clientHeight;
         ancho = document.documentElement.clientWidth;
@@ -71,7 +13,7 @@ var app={
         audioMoneda = new Audio('audio/213979__fenrirfangs__coin.mp3');
         audioFallo = new Audio('audio/171497__fins__error.mp3');
 
-        //app.sensorMovimiento();
+        app.sensorMovimiento();
         app.inicioJuego();
         document.body.addEventListener("keydown", app.eventoTeclado, false);
         document.addEventListener("touchmove", app.touchMove, false);
@@ -93,7 +35,7 @@ var app={
             
             moneda = game.add.sprite(0,0, 'moneda');
             billete = game.add.sprite(0, 120, 'billete');
-            cerdito = game.add.sprite(0,alto-55, 'cerdito');
+            cerdito = game.add.sprite(0,app.porcentajeAltura()*90, 'cerdito');
             scoreText = game.add.text(16, 16, puntuacion+"$", { fontSize: '36px', fill: 'white' });
             ;
             lifeText = game.add.text(ancho-150, 20, "♥♥♥  ‖", { fontSize: '24px', fill: 'red' });
@@ -101,7 +43,7 @@ var app={
             //floor = new Phaser.Rectangle(0, app.porcentajeAltura()*80, app.porcentajeAltura()*100, app.porcentajeAltura()*100);
 
             game.physics.arcade.enable(moneda);
-            game.physics.arcade.enable(billete);
+            game.phusics.arcade.enable(billete);
             game.physics.arcade.enable(cerdito);
 
             moneda.body.collideWorldBounds = true;
@@ -112,19 +54,16 @@ var app={
             moneda.body.onWorldBounds.add(app.actualizarMarcador, this);
             //moneda.outOfBoundsKill = true;
 
-            lifeText.visible = false;//TODO:...
-            billete.visible = false;
-
             moneda.x = app.posicionAleatoria();
 
             
 
-            app.sensorMovimiento();
+            //app.sensorMovimiento();
 
         }
 
         function update(){
-            moneda.body.velocity.y = 300 + monedasCaidas*5;
+            moneda.body.velocity.y = 900;
         }
 
         function render() {
@@ -167,14 +106,14 @@ var app={
         return Math.round(alto/100);
     },
     posicionAleatoria: function(){
-    	//return 0;
-        return Math.round(Math.random() * (ancho-this.diametroMoneda) );
+        //return ancho;
+        return Math.round(Math.random() * ancho);
     },
     actualizarMarcador: function(){
 
         //Si el cerdito se encuentra en el rango de la moneda aumentamos...
 
-        if(cerdito.x <= moneda.x && cerdito.x+58 > moneda.x){
+        if(cerdito.x < moneda.x && cerdito.x+57 > moneda.x){
             if(moneda.visible) {
                 audioMoneda.play();
                 puntuacion++;
@@ -183,8 +122,6 @@ var app={
             audioFallo.play();
             puntuacion-=3;//podemos ir variando en función del nivel...
         }
-
-        monedasCaidas++;
 
         moneda.y = 0;
         moneda.x = app.posicionAleatoria();
@@ -218,9 +155,9 @@ var app={
         }
         //console.log(test);
         console.log(e.code);
-        document.getElementById('marcador').innerHTML = e.code;
     },
     touchMove: function(e){
+
         var touchobj = e.changedTouches[0]; 
         cerdito.x = parseInt(touchobj.clientX) - (game.cache.getImage('cerdito').width /2);
         e.preventDefault();
@@ -236,7 +173,3 @@ if ('addEventListener' in document) {
         app.init();
     }, false);
 }
-        </script>
-
-    </body>
-</html>

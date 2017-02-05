@@ -2,13 +2,15 @@
 <widget id="tk.edurapp.piggymoney" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Piggy Money</name>
     <description>
-        A blank PhoneGap app.
+        Game Piggy Money.
     </description>
     <author email="support@phonegap.com" href="http://phonegap.com">
-        PhoneGap Team
+        Edurapp
     </author>
-    <content src="index.html" />
+	<preference name="phonegap-version" value="cli-6.3.1" />
+    <content src="menu.html" />
     <access origin="*" />
+	 <icon src="logo.png" />
 	<preference name="Fullscreen" value="true" />
 	<preference name="orientation" value="portrait" />
 	<plugin name="cordova-plugin-device-motion"/>
