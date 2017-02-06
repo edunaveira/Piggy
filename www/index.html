@@ -6,16 +6,17 @@
         <title>Piggy Money</title>
         <style>
         	body{
-        		background-color: #67d0ff;
+        		background-color: black;
         		margin: 0;
         	}
 
             canvas{
-                position: absolute;
+                display: block;
+                margin: auto;
                 top:0;
                 left: 0;
             }
-            
+            /*
             @media only screen and (orientation:portrait){
               canvas {  
                 
@@ -35,7 +36,7 @@
                  transform: rotate(90deg);
               }
             }
-
+*/
             #marcador{
             	position:fixed;
             	top: 16px;
@@ -54,6 +55,18 @@
         <script type="text/javascript" src="js/phaser.min.js"></script>
         <!--<script type="text/javascript" src="js/piggy.js?v=1.0.12">></script>-->
         <script>
+
+
+/* TODO
+    + Leer la config
+    + Poner solo 3 vidas
+    + Pop up con game over
+    + Subir puntuacione y guardar la maxima en local(cambiar de color cuando se sobrepase)...
+    + Touch que compruebe si el movimiento es posible...
+    + 
+
+*/
+
 var game;
 
 var app={
@@ -72,6 +85,7 @@ var app={
         audioFallo = new Audio('audio/171497__fins__error.mp3');
 
         //app.sensorMovimiento();
+        app.esEscritorio();
         app.inicioJuego();
         document.body.addEventListener("keydown", app.eventoTeclado, false);
         document.addEventListener("touchmove", app.touchMove, false);
@@ -228,6 +242,11 @@ var app={
     sacarBillete: function(frecuencia){
         if(parseInt(Math.random()*frecuencia) == 1) return true;
         return false;
+    },
+    esEscritorio: function(){
+        if(alto<ancho){//Forzamos a crear una vista 16:9 en vertical
+            ancho = parseInt(alto * 0.5625);
+        }
     }
 }
 

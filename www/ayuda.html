@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+		<title>Configuración</title>
+		<style type="text/css">
+			body{
+				background-color: #67d0ff;
+				color: white;
+				font-size: 24px;
+				margin: 0;
+				font-family: sans-serif;
+			}
+
+			tr td{
+				margin-bottom: 20px;
+			}
+
+			td:nth-child(2){
+				width: 36px;
+				height: 36px;
+				border-radius: 50px;
+			}
+
+			button{
+			    min-width: 300px;
+			    height: 50px;
+			    background-color: red;
+			    color: white;
+			    border-radius: 5px;
+			    display: block;
+			    border: 0px;
+			    margin: 24px auto;
+			    font-size: 24px;
+			}
+
+			button a{
+				text-decoration: none;
+				color: white;
+			}
+
+			.activo{
+				background-color: green;
+			}
+
+			#cabecera{
+				position: fixed;
+			    width: 100%;
+			    top: 0;
+				text-align: center;
+				background-color: #ff3399;
+				padding: 15px 0;
+			}
+
+			#cabecera span{
+				float: left;
+    			margin-left: 10px;
+			}
+
+			#cabecera p{
+				font-family: sans-serif;
+				display: inline;
+			    margin: 0;
+			    margin-left: -30px;
+			}
+
+			.container{
+				margin-top: 100px;
+			}
+
+			#texto-ayuda{
+				text-align: justify;
+				margin: 0 10px;
+			}
+
+		</style>
+	</head>
+	<body>
+
+		<div class="container">
+			<div id="cabecera">
+				<span id="volver">◄</span>
+				<p>Ayuda</p>
+			</div>
+			<div id="texto-ayuda">
+				<p>El juego consiste en recoger el mayor número de monedas posibles antes de finalizar las 3 vidas de las que se dispone. Para ello tenemos que mover al cerdito de un lado al otro, para que la moneda no se escape.</p>
+
+				<p>Para controlar el juego podemos utilizar el acelerómetro, inclinando nuestro teléfono para realizar el movimiento, utilizar la pantalla táctil para moverlo o en caso de disponer de teclado, podemos utilizar los controles de dirección(flechas de dirección izquierda y derecha) para realizar el movimiento.</p>
+			</div>
+
+		</div>
+
+		<script type="text/javascript" src="cordova.js"></script>
+		<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+		<script>
+
+			$(document).ready(function(){
+				$('#volver').click(function(){
+					history.back();
+				});
+			});
+
+		</script>
+
+	</body>
+</html>

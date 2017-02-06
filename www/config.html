@@ -9,6 +9,7 @@
 				background-color: #67d0ff;
 				color: white;
 				font-size: 24px;
+				margin: 0;
 
 			}
 
@@ -22,26 +23,70 @@
 				border-radius: 50px;
 			}
 
+			button{
+			    min-width: 300px;
+			    height: 50px;
+			    background-color: red;
+			    color: white;
+			    border-radius: 5px;
+			    display: block;
+			    border: 0px;
+			    margin: 24px auto;
+			    font-size: 24px;
+			}
+
+			button a{
+				text-decoration: none;
+				color: white;
+			}
+
+			.activo{
+				background-color: green;
+			}
+
+			#cabecera{
+				position: fixed;
+			    width: 100%;
+			    top: 0;
+				text-align: center;
+				background-color: #ff3399;
+				padding: 15px 0;
+			}
+
+			#cabecera span{
+				float: left;
+    			margin-left: 10px;
+			}
+
+			#cabecera p{
+				font-family: sans-serif;
+				display: inline;
+			    margin: 0;
+			    margin-left: -30px;
+			}
+
 		</style>
 	</head>
 	<body>
 
 		<div class="container">
+			<div id="cabecera">
+				<span id="volver">◄</span>
+				<p>Configuración</p>
+			</div>
+
 			<p id="test"></p>
-			<table>
-				<tr>
-					<td>Acelerometro</td>
-					<td style="background-color: green"></td>
-				</tr>
-				
-				<tr>
-					<td>Táctil</td>
-					<td style="background-color: red"></td>
-				</tr>
-			</table>
+			<div id="opciones">
+				<button id="audio">Audio</button>
+				<button id="acelerometro">Acelerometro</button>
+				<button id="tactil">Táctil</button>
+				<button id="teclado">Teclado</button>
+			</div>
+
 		</div>
 
 		<script type="text/javascript" src="cordova.js"></script>
+		<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
 		<script>
 			if(!localStorage.getItem('cont')){
 				localStorage.setItem('cont', 1);
@@ -50,16 +95,65 @@
 				cont = parseInt(localStorage.getItem('cont'))+1;
 				localStorage.setItem('cont', cont);
 			}
+			
 			localStorage.setItem('test', new Date());
 			document.getElementById('test').innerHTML = localStorage.getItem('cont');
+
+			config = {
+				audio: true,
+				acelerometro:  true,
+				tactil: true,
+				teclado: true,
+				comprobar: function(){
+					this.audio = this.comprobarCampo('audio');
+					this.acelerometro = this.comprobarCampo('acelerometro');
+					this.tactil = this.comprobarCampo('tactil');
+					this.teclado = this.comprobarCampo('teclado');
+				},
+				comprobarCampo: function(c){
+					if(!localStorage.getItem(c)){
+						localStorage.setItem(c,'true');//Por defecto activamos
+						return true;
+					}else{
+						return (localStorage.getItem(c)=='true'?true:false);
+					}
+				},
+				cambiar: function(campo, valor){
+					localStorage.setItem(campo, valor);
+				}
+			};
+
+			config.comprobar();
+
+			$(document).ready(function(){
+				$('#volver').click(function(){
+					history.back();
+				});
+				$('#opciones button').each(function(){
+					if(config.comprobarCampo(this.id)){
+						$(this).addClass('activo');
+					}
+				});
+				$('#opciones button').click(function(){
+					var nuevoValor = !config.comprobarCampo(this.id);
+					config.cambiar(this.id, nuevoValor);
+					if(nuevoValor) $(this).addClass('activo');
+					else $(this).removeClass('activo');
+				});
+			});
+
+			
+
+			console.log(config.audio);
 
 			/*
 				Nivel
 
-				Acelerometro
-				Tactil
-				Teclado
 				Sonido
+				Acelerometro
+				Táctil
+				Teclado
+				
 
 			*/
 
