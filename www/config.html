@@ -65,6 +65,11 @@
 			    margin-left: -30px;
 			}
 
+			#opciones{
+				display: none;
+				margin-top: 100px;
+			}
+
 		</style>
 	</head>
 	<body>
@@ -75,7 +80,6 @@
 				<p>Configuración</p>
 			</div>
 
-			<p id="test"></p>
 			<div id="opciones">
 				<button id="audio">Audio</button>
 				<button id="acelerometro">Acelerometro</button>
@@ -87,6 +91,7 @@
 
 		<script type="text/javascript" src="cordova.js"></script>
 		<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+		<script type="text/javascript" src="js/config.js"></script>
 		<script>
 			if(!localStorage.getItem('cont')){
 				localStorage.setItem('cont', 1);
@@ -96,66 +101,30 @@
 				localStorage.setItem('cont', cont);
 			}
 			
-			localStorage.setItem('test', new Date());
-			document.getElementById('test').innerHTML = localStorage.getItem('cont');
-
-			config = {
-				audio: true,
-				acelerometro:  true,
-				tactil: true,
-				teclado: true,
-				comprobar: function(){
-					this.audio = this.comprobarCampo('audio');
-					this.acelerometro = this.comprobarCampo('acelerometro');
-					this.tactil = this.comprobarCampo('tactil');
-					this.teclado = this.comprobarCampo('teclado');
-				},
-				comprobarCampo: function(c){
-					if(!localStorage.getItem(c)){
-						localStorage.setItem(c,'true');//Por defecto activamos
-						return true;
-					}else{
-						return (localStorage.getItem(c)=='true'?true:false);
-					}
-				},
-				cambiar: function(campo, valor){
-					localStorage.setItem(campo, valor);
-				}
-			};
-
-			config.comprobar();
 
 			$(document).ready(function(){
+
 				$('#volver').click(function(){
 					history.back();
 				});
+
 				$('#opciones button').each(function(){
 					if(config.comprobarCampo(this.id)){
 						$(this).addClass('activo');
 					}
 				});
+				$('#opciones').show();
+
 				$('#opciones button').click(function(){
 					var nuevoValor = !config.comprobarCampo(this.id);
 					config.cambiar(this.id, nuevoValor);
-					if(nuevoValor) $(this).addClass('activo');
-					else $(this).removeClass('activo');
+					if(nuevoValor) 
+						$(this).addClass('activo');
+					else 
+						$(this).removeClass('activo');
 				});
 			});
 
-			
-
-			console.log(config.audio);
-
-			/*
-				Nivel
-
-				Sonido
-				Acelerometro
-				Táctil
-				Teclado
-				
-
-			*/
 
 		</script>
 

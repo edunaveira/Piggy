@@ -16,27 +16,7 @@
                 top:0;
                 left: 0;
             }
-            /*
-            @media only screen and (orientation:portrait){
-              canvas {  
-                
-                -webkit-transform: rotate(0deg);
-                -moz-transform: rotate(0deg);
-                -o-transform: rotate(0deg);
-                -ms-transform: rotate(0deg);
-                transform: rotate(0deg);
-              }
-            }
-            @media only screen and (orientation:landscape){
-              canvas {  
-                 -webkit-transform: rotate(90deg);
-                 -moz-transform: rotate(90deg);
-                 -o-transform: rotate(90deg);
-                 -ms-transform: rotate(90deg);
-                 transform: rotate(90deg);
-              }
-            }
-*/
+
             #marcador{
             	position:fixed;
             	top: 16px;
@@ -45,14 +25,65 @@
             	color: white;
             }
 
+            #game-over{
+                overflow: scroll;
+                display: none;
+                background-color: #67d0ff;
+                width: 100%;
+                height: 200%;
+                color: white;
+                font-family: monospace;
+                text-align: center;
+                font-size: 48px;
+                position: fixed;
+                padding-top: 75px;
+            }
+
+            #game-over p{
+                margin: 0;
+            }
+
+            button{
+                min-width: 300px;
+                height: 50px;
+                background-color: #ff3399;
+                color: white;
+                border-radius: 5px;
+                display: block;
+                border: 0px;
+                margin: 24px auto;
+                font-size: 24px;
+            }
+
         </style>
     </head>
     <body>
 
         <div id="marcador"></div>
 
+        <div id="game-over">
+            <p>GAME OVER</P>
+            <br>
+            <p id="puntuacion-obtenida">XXX$</p>
+            <form action="http://naveira.tk/piggy/bd/index.php" method="POST">
+                <input type="hidden" value="0" id="puntos" name="puntos">
+                <input type="text" placeholder="Nombre" name="nombre">
+                <button type="submit">Enviar</button>
+            </form>
+            
+            <button onclick="app.reiniciar()">Reiniciar</button>
+        </div>
+
+        <div id="pausa">
+
+        </div>
+
+        <div id="instrucciones"></div>
+
         <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
         <script type="text/javascript" src="js/phaser.min.js"></script>
+        <script type="text/javascript" src="js/config.js"></script>
         <!--<script type="text/javascript" src="js/piggy.js?v=1.0.12">></script>-->
         <script>
 
@@ -63,7 +94,6 @@
     + Pop up con game over
     + Subir puntuacione y guardar la maxima en local(cambiar de color cuando se sobrepase)...
     + Touch que compruebe si el movimiento es posible...
-    + 
 
 */
 
@@ -76,6 +106,7 @@ var app={
         nivel = 1;
         puntuacion = 0;
         monedasCaidas = 1;
+        vidas = 3;
 
         alto  = document.documentElement.clientHeight;
         ancho = document.documentElement.clientWidth;
@@ -110,7 +141,7 @@ var app={
             cerdito = game.add.sprite(0,alto-55, 'cerdito');
             scoreText = game.add.text(16, 16, puntuacion+"$", { fontSize: '36px', fill: 'white' });
             ;
-            lifeText = game.add.text(ancho-150, 20, "♥♥♥  ‖", { fontSize: '24px', fill: 'red' });
+            lifeText = game.add.text(ancho-100, 20, "♥♥♥", { fontSize: '24px', fill: '#ff3399' });
             ;
             //floor = new Phaser.Rectangle(0, app.porcentajeAltura()*80, app.porcentajeAltura()*100, app.porcentajeAltura()*100);
 
@@ -126,7 +157,7 @@ var app={
             moneda.body.onWorldBounds.add(app.actualizarMarcador, this);
             //moneda.outOfBoundsKill = true;
 
-            lifeText.visible = false;//TODO:...
+            //lifeText.visible = true;//TODO:...
             billete.visible = false;
 
             moneda.x = app.posicionAleatoria();
@@ -156,6 +187,7 @@ var app={
         }
 
         function onSuccess(dato){
+            if(!config.acelerometro) return true;
             X = dato.x ;
             Y = dato.y ;
 
@@ -181,7 +213,7 @@ var app={
         return Math.round(alto/100);
     },
     posicionAleatoria: function(){
-    	//return 0;
+        //return 0;
         return Math.round(Math.random() * (ancho-this.diametroMoneda) );
     },
     actualizarMarcador: function(){
@@ -190,12 +222,12 @@ var app={
 
         if(cerdito.x <= moneda.x && cerdito.x+58 > moneda.x){
             if(moneda.visible) {
-                audioMoneda.play();
+                if(config.audio) audioMoneda.play();
                 puntuacion++;
             }
         }else{
-            audioFallo.play();
-            puntuacion-=3;//podemos ir variando en función del nivel...
+            if(config.audio) audioFallo.play();
+            app.quitarVida();
         }
 
         monedasCaidas++;
@@ -207,14 +239,13 @@ var app={
     },
     eventoTeclado: function(e){
         var test;
-
+        if(!config.teclado) return true;
         //TODO: restar la medida del cerdito...
         switch(e.code){
             case "ArrowRight":
                 if(cerdito.x-15<=ancho) cerdito.x += 15;
             break;
             case "ArrowLeft":
-
                 if(cerdito.x-15>=0) cerdito.x -= 15;
             break;
             case "ArrowUp":
@@ -227,14 +258,15 @@ var app={
                 test = "reset";
             break;
             case "KeyP":
-                game.paused = !game.paused;
+                if(vidas>-1) game.paused = !game.paused;
             break;
         }
         //console.log(test);
         console.log(e.code);
-        document.getElementById('marcador').innerHTML = e.code;
+        //document.getElementById('marcador').innerHTML = e.code;
     },
     touchMove: function(e){
+        if(!config.tactil) return true;
         var touchobj = e.changedTouches[0]; 
         cerdito.x = parseInt(touchobj.clientX) - (game.cache.getImage('cerdito').width /2);
         e.preventDefault();
@@ -247,8 +279,55 @@ var app={
         if(alto<ancho){//Forzamos a crear una vista 16:9 en vertical
             ancho = parseInt(alto * 0.5625);
         }
+    },
+    quitarVida: function(){
+        vidas--;
+        console.log(vidas);
+        if(vidas==2) lifeText.text = "♥♥";
+        if(vidas==1) lifeText.text = "♥";
+        if(vidas==0) lifeText.text = "";
+        if(vidas==-1){
+            lifeText.text = "";
+            //En este caso ya paramos el juego y sacamos el POP-UP Game Over
+            moneda.visible = false;
+            game.paused = true;
+            document.getElementById('game-over').style.display = "block";
+            app.enviarPuntuacion();
+        } 
+    },
+    reiniciar: function(){
+        document.getElementById('game-over').style.display = "none";
+        puntuacion = 0;
+        monedasCaidas = 1;
+        moneda.visible = true;
+        game.paused = false;
+        vidas = 4;//Quita una vida al reiniciar
+        lifeText.text = "♥♥♥";
+
+    },
+    enviarPuntuacion: function(){
+        $('#puntuacion-obtenida').text(puntuacion+"$");
+        $('#puntos').val(puntuacion);
     }
 }
+
+$.ajax({
+    type: 'GET',
+    crossDomain:true,
+    url: 'http://naveira.tk/piggy/bd/index.php',
+    data: {"nombre" : "test123", "puntos": "123" },
+    success: function(result) {
+        console.log(result);
+    }
+});
+
+//POP-UP de config/pausa
+
+/*
+    Continuar
+    Reiniciar
+        Resto de ajustes...
+*/
 
 if ('addEventListener' in document) {
     document.addEventListener('deviceready', function() {
