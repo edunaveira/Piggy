@@ -1,17 +1,18 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="tk.edurapp.piggymoney" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="tk.edurapp.piggymoney" version="1.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Piggy Money</name>
     <description>
-        Game Piggy Money.
+        Piggy Money Game.
     </description>
-    <author email="support@phonegap.com" href="http://phonegap.com">
+    <author email="edurapp@gmail.com" href="http://edurapp.tk">
         Edurapp
     </author>
 	<preference name="phonegap-version" value="cli-6.3.1" />
     <content src="menu.html" />
-    <access origin="*" />
-	 <icon src="logo.png" />
+    <access origin="http://naveira.tk" />
+	<icon src="logo.png" />
 	<preference name="Fullscreen" value="true" />
 	<preference name="orientation" value="portrait" />
 	<plugin name="cordova-plugin-device-motion"/>
+	<plugin name="cordova-plugin-whitelist" spec="1" />
 </widget>

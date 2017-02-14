@@ -6,12 +6,13 @@
         <title>Piggy Money</title>
         <style>
         	body{
-        		background-color: black;
+        		background-color: #67d0ff;
         		margin: 0;
         	}
 
             canvas{
-                display: block;
+                position: fixed;
+                z-index: 1;
                 margin: auto;
                 top:0;
                 left: 0;
@@ -21,13 +22,18 @@
             	position:fixed;
             	top: 16px;
             	right: 16px;
-            	z-index: 1;
+            	z-index: 2;
             	color: white;
             }
 
-            #game-over{
+            #marcador img{
+                width: 36px;
+            }
+
+            .popup{
                 overflow: scroll;
                 display: none;
+                z-index: 9;
                 background-color: #67d0ff;
                 width: 100%;
                 height: 200%;
@@ -39,12 +45,13 @@
                 padding-top: 75px;
             }
 
-            #game-over p{
+            .popup p{
                 margin: 0;
+                text-align: center;
             }
 
             button{
-                min-width: 300px;
+                width: 300px;
                 height: 50px;
                 background-color: #ff3399;
                 color: white;
@@ -55,30 +62,75 @@
                 font-size: 24px;
             }
 
+            ::-webkit-input-placeholder { 
+                color: white;
+            }
+
+            input[type=text]{
+                color: white;
+                border: none;
+                border-bottom: 1px solid #ff3399;
+                min-width: 300px;
+                background-color: rgba(255, 0, 0, 0);
+                font-size: 24px;
+                text-align: center;
+            }
+
+            #pausa{
+                background-color: rgba(103, 208, 255, 0.56);
+            }
+
+            #cargando{
+                display: block;
+                z-index: 0;
+                margin: 0 auto;
+                width: 128px;
+                padding-top: 150px;
+            }
+
+            .rotar{
+                -webkit-animation: rotation 1s infinite linear;
+            }
+
+            @-webkit-keyframes rotation {
+                from {-webkit-transform: rotate(0deg);}
+                to   {-webkit-transform: rotate(359deg);}
+            }
+
         </style>
     </head>
     <body>
 
-        <div id="marcador"></div>
+        <div id="marcador">
+            <img src="img/pausa.png" onclick="app.pausar()">
+        </div>
 
-        <div id="game-over">
+        <div id="game-over" class="popup">
             <p>GAME OVER</P>
             <br>
             <p id="puntuacion-obtenida">XXX$</p>
             <form action="http://naveira.tk/piggy/bd/index.php" method="POST">
                 <input type="hidden" value="0" id="puntos" name="puntos">
-                <input type="text" placeholder="Nombre" name="nombre">
+                <input type="text" placeholder="Tu nombre" name="nombre">
                 <button type="submit">Enviar</button>
             </form>
             
             <button onclick="app.reiniciar()">Reiniciar</button>
         </div>
 
-        <div id="pausa">
-
+        <div id="pausa" class="popup">
+            <p>Pausa</p>
+            <button onclick="app.reanudar()">Reanudar</button>
+            <button onclick="window.location.href='config.html'">Opciones</button>
+            <button onclick="window.location.href='menu.html'">Menu Principal</button>
+            <button onclick="app.reiniciar()">Reiniciar</button>
         </div>
 
         <div id="instrucciones"></div>
+
+        <div id="cargando">
+            <img class="rotar" src="img/loading-circles.png">
+        </div>
 
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
@@ -141,7 +193,7 @@ var app={
             cerdito = game.add.sprite(0,alto-55, 'cerdito');
             scoreText = game.add.text(16, 16, puntuacion+"$", { fontSize: '36px', fill: 'white' });
             ;
-            lifeText = game.add.text(ancho-100, 20, "♥♥♥", { fontSize: '24px', fill: '#ff3399' });
+            lifeText = game.add.text(ancho-120, 20, "♥♥♥", { fontSize: '24px', fill: '#ff3399' });
             ;
             //floor = new Phaser.Rectangle(0, app.porcentajeAltura()*80, app.porcentajeAltura()*100, app.porcentajeAltura()*100);
 
@@ -243,10 +295,10 @@ var app={
         //TODO: restar la medida del cerdito...
         switch(e.code){
             case "ArrowRight":
-                if(cerdito.x-15<=ancho) cerdito.x += 15;
+                if(cerdito.x+game.cache.getImage('cerdito').width<ancho) cerdito.x += 15;
             break;
             case "ArrowLeft":
-                if(cerdito.x-15>=0) cerdito.x -= 15;
+                if(cerdito.x>0) cerdito.x -= 15;
             break;
             case "ArrowUp":
                 test = "arriba";
@@ -268,7 +320,14 @@ var app={
     touchMove: function(e){
         if(!config.tactil) return true;
         var touchobj = e.changedTouches[0]; 
-        cerdito.x = parseInt(touchobj.clientX) - (game.cache.getImage('cerdito').width /2);
+
+        var toqueX = parseInt(touchobj.clientX);
+        var anchuraCerdito = game.cache.getImage('cerdito').width;
+        var centroCerdito = anchuraCerdito / 2;
+
+        //revisar en pantallas tactiles
+        if((toqueX  >= 0) && (toqueX <= ancho)) 
+            cerdito.x =  toqueX - centroCerdito;
         e.preventDefault();
     },
     sacarBillete: function(frecuencia){
@@ -297,6 +356,7 @@ var app={
     },
     reiniciar: function(){
         document.getElementById('game-over').style.display = "none";
+        document.getElementById('pausa').style.display = "none";
         puntuacion = 0;
         monedasCaidas = 1;
         moneda.visible = true;
@@ -308,18 +368,27 @@ var app={
     enviarPuntuacion: function(){
         $('#puntuacion-obtenida').text(puntuacion+"$");
         $('#puntos').val(puntuacion);
+    },
+    pausar: function(){
+        document.getElementById('pausa').style.display = "block";
+        game.paused = true;
+    },
+    reanudar: function(){
+        document.getElementById('pausa').style.display = "none";
+        game.paused = false;
     }
 }
 
+/*
 $.ajax({
-    type: 'GET',
+    type: 'POST',
     crossDomain:true,
     url: 'http://naveira.tk/piggy/bd/index.php',
     data: {"nombre" : "test123", "puntos": "123" },
     success: function(result) {
         console.log(result);
     }
-});
+});*/
 
 //POP-UP de config/pausa
 
