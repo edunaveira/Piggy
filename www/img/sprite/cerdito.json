@@ -1,0 +1,44 @@
+{"frames": [
+
+{
+	"filename": "1.png",
+	"frame": {"x":0,"y":0,"w":90,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":56},
+	"sourceSize": {"w":90,"h":56}
+},
+{
+	"filename": "2.png",
+	"frame": {"x":90,"y":0,"w":90,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":56},
+	"sourceSize": {"w":90,"h":56}
+},
+{
+	"filename": "29.png",
+	"frame": {"x":180,"y":0,"w":90,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":56},
+	"sourceSize": {"w":90,"h":56}
+},
+{
+	"filename": "30.png",
+	"frame": {"x":270,"y":0,"w":90,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":56},
+	"sourceSize": {"w":90,"h":56}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "cerdito.png",
+	"format": "RGBA8888",
+	"size": {"w":360,"h":56},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:068234d70b1ab8a7dc384703f9e5fd4d:64316a620927e879338df6fa8911dc4d:4bee9487441cea3cd3ad8b79b686783b$"
+}
+}
